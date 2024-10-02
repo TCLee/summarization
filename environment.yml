@@ -1,0 +1,15 @@
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11.*
+  - jupyterlab=4.2.*
+  - ipywidgets=8.1.*
+  - python-dotenv=1.0.*
+  - langchain=0.3.*
+  - langchain-community=0.3.*
+  - langgraph=0.2.*
+  - tokenizers=0.20.* # HuggingFace Tokenizers
+  - pip=24.0.*
+  - pip:
+    - -r requirements.txt
