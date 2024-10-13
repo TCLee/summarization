@@ -1,0 +1,15 @@
+Improve the original summary using additional information provided in the context below. Use only the information provided in the original summary or context to produce the new summary. Do not make up or guess any information that is not provided in the original summary nor context. Your final answer should only be the new improved summary and nothing else. 
+
+--------------
+
+Original summary:
+{current_summary}
+
+--------------
+
+Context:
+{new_context}
+
+--------------
+
+New improved summary:

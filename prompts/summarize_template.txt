@@ -1,0 +1,10 @@
+Write a concise summary of the given text below. Use only the information provided in the text to produce the summary. Do not make up or guess any information not provided in the text. Your final answer should only be the summary and nothing else.
+
+---------------
+
+Text to summarize:
+{context}
+
+-------------
+
+Summary:
