@@ -1,6 +1,6 @@
-Write a concise summary of the given text below. Use only the information provided in the text below to produce the summary. Do not add any additional information not provided in the text below. Your final answer should only be the summary and nothing else.
+Write a plot summary of the following story in under 500 words. Only use the information provided in the story below to produce the plot summary. Your final answer should only be the plot summary and nothing else.
 
-Text to summarize:
+Story to summarize:
 {context}
 
-Summary:
+Plot summary:

@@ -1,0 +1,6 @@
+Take the list of summaries below and distill it into a final consolidated summary. Your final answer should only be the consolidated summary and nothing else.
+
+List of summaries:
+{docs}
+
+Consolidated summary:
