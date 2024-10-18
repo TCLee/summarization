@@ -1,31 +1,24 @@
-# Build a RAG application over a SQL database
+# Summarize text using a local LLM
 
 ## Overview
 
-In the [notebook](sql-rag.ipynb), we will see how to build a RAG application that allows a LLM to do question answering over a SQL database (or relational database).
+In this notebook, we'll go over how to summarize text using a LLM running locally on your own device. LLMs are a great tool for summarizing text, given their proficiency in understanding and generating text.
 
-At a high-level, the steps of the system are:
+In this notebook, we'll go over different strategies to summarize text.
+If all the documents can fit in the LLM's context window, we can use a simple approach that just _"stuffs"_ all the documents into a single prompt for summarization. However, we'll need different approaches in cases where the amount of text is too large to fit in the LLM's context window.
 
-1. **Convert question to SQL query**: Model converts user's natural language question to a syntatically valid SQL query.
-2. **Execute SQL query**: Model invokes a tool to execute the SQL query.
-3. **Answer the question**: Model synthesizes an answer to the user's question using the database query results.
-
-![Convert user's question to SQL](img/sql_usecase.png "Convert user's question to SQL")
-**Figure 1**: Image from [LangChain tutorial](https://python.langchain.com/docs/tutorials/sql_qa/#architecture)
-
-In the notebook, we will explore two ways of building the system. One using chains with LangChain and another using an agent with LangGraph.
-
-The code in this notebook is adapted from the LangChain tutorial: [Build a Question/Answering system over SQL data](https://python.langchain.com/docs/tutorials/sql_qa).
+The code in this notebook is adapted from the [LangChain tutorial: Summarize Text](https://python.langchain.com/docs/tutorials/summarization).
 
 
 ## Project Directory Structure
 
 Directory | Description
 :--- | :---
-`db` | Contains the sample database and the SQL script to re-create the sample database.
-`examples` | Contains SQL examples used for few-shot prompting. Includes a notebook that shows how to convert SQL examples to JSON.
-`prompts` | Contains prompt templates for the LLM
-`img` | Contains images used in the notebook
+`data` | Contains sample text data that will be used for summarization
+`prompts` | Contains prompt templates for use with the LLM
+`images` | Contains images used in the notebook
+`tokenizer` | Contains the [🤗 Hugging Face tokenizer](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) to be used with the `Llama 3.2` model.
+
 
 ## Setup
 
@@ -34,7 +27,7 @@ Directory | Description
 Clone this repository to your local computer by running:
 
 ```zsh
-git clone https://github.com/TCLee/sql-rag
+git clone https://github.com/TCLee/summarization.git
 ```
 
 ### Conda
@@ -44,7 +37,7 @@ git clone https://github.com/TCLee/sql-rag
 2. Make sure the current working directory is this cloned project's directory:
 
    ```zsh
-   cd /path/to/sql-rag
+   cd /path/to/summarization
    ```
    
 3. Create the environment from the 
@@ -54,13 +47,38 @@ git clone https://github.com/TCLee/sql-rag
     conda env create -f environment.yml -p ./env
     ```
 
-    This will create a new environment in a subdirectory of the project directory called `env`, (e.g., `/path/to/sql-rag/env`)
+    This will create a new environment in a subdirectory of the project directory called `env`, (e.g., `/path/to/summarization/env`)
 
 4. Activate the environment: 
 
     ```zsh
     conda activate ./env
     ```
+
+### Run LLM locally
+
+This guide will show you how to run [`LLaMA 3.2`](https://ollama.com/library/llama3.2:3b) with `3B` parameters via [`Ollama`](https://ollama.com) locally (e.g., on your laptop).
+
+1. [Download](https://ollama.com/download/mac) and run the `Ollama` desktop app.
+
+2. Open the `Terminal` app and run:
+
+    ```zsh
+    ollama pull llama3.2:3b
+    ```
+
+    This will fetch the `Llama 3.2` model from a registry onto your computer.
+
+3. You can verify that the `Llama 3.2` model has been downloaded by running:
+
+    ```zsh 
+    ollama list
+    ```
+
+    Make sure you see `llama3.2:3b` in the list of models.
+
+Check out Ollama's [GitHub repo](https://github.com/ollama/ollama) for more details and [documentation](https://github.com/ollama/ollama/tree/main/docs#documentation).
+
 
 ### Environment variables
 
@@ -69,26 +87,15 @@ This project makes use of
 to load in the environment variables from a `.env` file.
 
 Create a `.env` file in the root directory of this cloned repository
-(e.g., `/path/to/sql-rag/.env`). Fill in the following with your own API keys:
+(e.g., `/path/to/summarization/.env`). Fill in the following with your own API keys:
 
 ```Dotenv
-# Google Gemini API
-GOOGLE_API_KEY="your-google-secret-key"
-
 # Optional. Recommended to see what's going on 
 # under the hood of LangGraph and LangChain.
 LANGSMITH_API_KEY="your-langsmith-secret-key"
 LANGCHAIN_TRACING_V2="true"
-LANGCHAIN_PROJECT="SQL RAG"
+LANGCHAIN_PROJECT="Summarization"
 ```
-
-#### Google Gemini
-The LLM that we will use in the notebook is Google's [Gemini 1.5 Flash](https://ai.google.dev/gemini-api/docs). It is fast and it offers a generous free tier for us to play around with.
-
-To use the Gemini API, you'll need an API key. If you do not already have one, create a key in Google AI Studio.
-
-[Get an API key](https://makersuite.google.com/app/apikey)
-
 
 #### (Optional) LangSmith
 Many of the applications you build with LangChain will contain multiple steps with multiple invocations of LLM calls. As these applications get more and more complex, it becomes crucial to be able to inspect what exactly is going on inside your chain or agent. The best way to do this is with [LangSmith](https://smith.langchain.com/).
@@ -103,5 +110,5 @@ jupyter lab
 ```
 
 In Jupyter Lab, open the notebook 
-[`sql-rag.ipynb`](sql-rag.ipynb) 
+[`summarization.ipynb`](summarization.ipynb) 
 and follow the instructions there.
